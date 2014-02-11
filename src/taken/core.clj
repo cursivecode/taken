@@ -52,12 +52,15 @@
     ([this selector attribute]
        (attr (.select this selector) attribute))))
 
-(defn grab-helper [m [k query & fns]]
-  (if (= k :conn)
-    (assoc m :conn (query (m (first fns))))
-    (assoc m k ((apply comp (reverse fns)) (apply snatch (cons (:conn m) query))))))
+(defn grab-helper [m [k v]]
+  (let [possible-query (take 2 v)]
+    (if (every? string? possible-query)
+      (assoc m k ((apply comp (reverse (drop 2 v)))
+                  (apply snatch (cons (:conn m) possible-query))))
+      (assoc m k ((apply comp (reverse (drop 1 v)))
+                  (apply snatch (cons (:conn m) (take 1 v))))))))
 
-(defn grab [conn options]
-  (reduce grab-helper {:conn conn} options))
+(defn grab [options]
+  (reduce grab-helper (select-keys options [:conn]) (dissoc options :conn)))
 
 
