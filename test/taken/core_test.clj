@@ -60,13 +60,12 @@
              "/images/w3cert.gif")))))
 
 (deftest grab-test
-  (let [conn (setup-config {:url "http://facebook.com"
-                            :user-agent "Mozilla/5.0"})
+  (let [conn {:conn (setup-config {:url "http://facebook.com"
+                                   :user-agent "Mozilla/5.0"})}
         element (Jsoup/parse (slurp "../taken/resources/test.html"))]
-    (testing "grab with connection"
-      (is (= (:title (grab conn [[:title ["div.loggedout_menubar a" "title"] first]]))
-             "Go to Facebook Home")))
-    (testing "grab with multiple functions"
-      (is (= (:title (grab conn [[:title ["div.loggedout_menubar a" "title"]
-                                  first first]]))
-             \G)))))
+    (testing "selector"
+      (is (= (:logo (grab (assoc conn :logo ["div a i.fb_logo u" text])))
+             "Facebook logo")))
+    (testing "selector and attribute"
+      (is (= (:title (grab (assoc conn :title ["div.loggedout_menubar a" "title" first])))
+             "Go to Facebook Home")))))

@@ -29,6 +29,11 @@
     (map #(.attr % attr) elements)
     elements))
 
+(defn text
+  "Returns the text of a field"
+  [field]
+  (.text field))
+
 (defprotocol Takeable
   (snatch [this selector] [this selector attribute]))
 
@@ -62,5 +67,4 @@
 
 (defn grab [options]
   (reduce grab-helper (select-keys options [:conn]) (dissoc options :conn)))
-
 
